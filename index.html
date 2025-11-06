@@ -3,305 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Скоро открытие - Аелум Haus</title>
+    <title>Аелум Haus</title>
     <style>
-        * {
+        /* --- ПОДКЛЮЧЕНИЕ ПОЛЬЗОВАТЕЛЬСКОГО ШРИФТА --- */
+        @font-face {
+            font-family: 'AelumFont';
+            src: url('Font.otf') format('opentype');
+        }
+
+        /* --- ОБЩИЕ СТИЛИ --- */
+        body, html {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 100%;
+            height: 100%;
             overflow: hidden;
-            position: relative;
+            font-family: 'AelumFont', sans-serif;
         }
 
-        /* Анимированные фоновые круги */
-        .bg-circle {
+        /* --- НЕБО --- */
+        .sky {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(to bottom, #5BA3E5 0%, #8BC0F0 50%, #B5D8F5 100%);
+        }
+
+        /* --- ОСНОВНЫЕ СТИЛИ ОБЛАКА --- */
+        .cloud {
             position: absolute;
+            background: transparent;
+        }
+
+        .cloud-puff {
+            position: absolute;
+            background: radial-gradient(ellipse at center, 
+                rgba(255, 255, 255, 1) 0%, 
+                rgba(255, 255, 255, 0.9) 30%, 
+                rgba(255, 255, 255, 0.5) 60%, 
+                rgba(255, 255, 255, 0) 100%);
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            animation: float 20s infinite ease-in-out;
+            filter: blur(2px);
+            z-index: 2;
         }
 
-        .bg-circle:nth-child(1) {
-            width: 300px;
-            height: 300px;
-            top: -150px;
-            left: -150px;
-            animation-delay: 0s;
+        .cloud-shadow-puff {
+            position: absolute;
+            background: radial-gradient(ellipse at center, 
+                rgba(150, 150, 150, 0.6) 0%, 
+                rgba(180, 180, 180, 0.4) 40%, 
+                rgba(220, 220, 220, 0.2) 60%, 
+                rgba(255, 255, 255, 0) 100%);
+            border-radius: 50%;
+            filter: blur(4px);
+            z-index: 1;
         }
 
-        .bg-circle:nth-child(2) {
-            width: 200px;
-            height: 200px;
-            bottom: -100px;
-            right: -100px;
-            animation-delay: 5s;
-        }
-
-        .bg-circle:nth-child(3) {
-            width: 150px;
-            height: 150px;
-            top: 50%;
-            left: 10%;
-            animation-delay: 10s;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0) rotate(0deg);
-            }
-            33% {
-                transform: translateY(-30px) rotate(120deg);
-            }
-            66% {
-                transform: translateY(30px) rotate(240deg);
-            }
-        }
-
-        /* Основной контейнер */
-        .container {
-            text-align: center;
-            z-index: 10;
-            padding: 2rem;
-            animation: fadeInUp 1s ease-out;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Главная надпись */
-        .main-title {
-            font-size: clamp(2rem, 5vw, 4rem);
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 2rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            position: relative;
-            display: inline-block;
-        }
-
-        .main-title::after {
+        .cloud::before {
             content: '';
             position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
-            animation: expandLine 1.5s ease-out 0.5s forwards;
-        }
-
-        @keyframes expandLine {
-            to {
-                width: 100%;
-            }
-        }
-
-        /* Анимированные точки */
-        .dots {
-            display: inline-block;
-            margin-left: 10px;
-        }
-
-        .dot {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
+            background: radial-gradient(ellipse at center, 
+                rgba(0, 0, 0, 0.4) 0%, 
+                rgba(0, 0, 0, 0.2) 40%, 
+                rgba(0, 0, 0, 0) 70%);
             border-radius: 50%;
-            background-color: #f5576c;
-            margin: 0 3px;
-            animation: bounce 1.4s infinite ease-in-out both;
+            filter: blur(20px);
+            z-index: 0;
         }
 
-        .dot:nth-child(1) {
-            animation-delay: -0.32s;
+        /* --- НЕПРЕРЫВНАЯ АНИМАЦИЯ ОБЛАКОВ --- */
+        @keyframes drift {
+            from { transform: translateX(-400px); }
+            to { transform: translateX(calc(100vw + 400px)); }
         }
 
-        .dot:nth-child(2) {
-            animation-delay: -0.16s;
-        }
+        /* --- СЛОИ ОБЛАКОВ ДЛЯ НЕПРЕРЫВНОГО ПОТОКА --- */
+        .cloud-fg { animation: drift 40s linear infinite; }
+        .cloud-fg-1 { top: 15%; width: 280px; height: 120px; animation-delay: 0s; }
+        .cloud-fg-2 { top: 60%; width: 300px; height: 110px; animation-delay: -20s; }
+        .cloud-fg-3 { top: 35%; width: 260px; height: 100px; animation-delay: -10s; }
 
-        @keyframes bounce {
-            0%, 80%, 100% {
-                transform: scale(0);
-            }
-            40% {
-                transform: scale(1);
-            }
-        }
+        .cloud-mg { animation: drift 70s linear infinite; opacity: 0.8; transform: scale(0.8); }
+        .cloud-mg-1 { top: 25%; width: 200px; height: 80px; animation-delay: 0s; }
+        .cloud-mg-2 { top: 70%; width: 180px; height: 75px; animation-delay: -30s; }
+        .cloud-mg-3 { top: 5%; width: 220px; height: 90px; animation-delay: -50s; }
 
-        /* Подпись */
-        .subtitle {
-            font-size: clamp(1rem, 2.5vw, 1.5rem);
-            color: rgba(255, 255, 255, 0.9);
-            font-weight: 300;
-            letter-spacing: 1px;
-            opacity: 0;
-            animation: fadeIn 1s ease-out 1s forwards;
-        }
-
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-            }
-        }
-
-        /* Декоративные элементы */
-        .decorative-line {
-            width: 100px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
-            margin: 2rem auto;
-            opacity: 0;
-            animation: slideIn 1s ease-out 1.5s forwards;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(-100px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        /* Пульсирующий эффект */
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        /* Адаптивность */
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
+        .cloud-bg { animation: drift 120s linear infinite; opacity: 0.6; transform: scale(0.5); }
+        .cloud-bg-1 { top: 10%; width: 130px; height: 60px; animation-delay: 0s; }
+        .cloud-bg-2 { top: 45%; width: 140px; height: 55px; animation-delay: -40s; }
+        .cloud-bg-3 { top: 75%; width: 120px; height: 50px; animation-delay: -80s; }
+        
+        /* --- СТИЛИЗАЦИЯ КОНТЕНТНОГО БЛОКА (GLASSMORPHISM) --- */
+        .welcome-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 450px;
+            padding: 40px;
+            text-align: center;
             
-            .main-title {
-                font-size: 2rem;
-            }
+            /* Возвращаем эффект прозрачного размытия */
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             
-            .subtitle {
-                font-size: 1rem;
-            }
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            z-index: 10;
         }
 
-        /* Дополнительный эффект при наведении */
-        .container:hover .main-title {
-            transform: scale(1.02);
-            transition: transform 0.3s ease;
+        /* --- СТИЛИ ТЕКСТА (ПОСТОЯННО ВИДИМЫЕ С ЭФФЕКТОМ) --- */
+        .welcome-container h1 {
+            color: #2c2c2c; /* Тёмно-серый */
+            font-size: 2.2em;
+            margin: 0 0 25px 0;
+            /* СВЕТЛАЯ ТЕНЬ ДЛЯ ЧИТАЕМОСТИ - КЛЮЧЕВОЙ МОМЕНТ */
+            text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.8);
         }
+
+        .welcome-container .social-links {
+            margin-bottom: 25px;
+        }
+
+        .welcome-container a {
+            display: block;
+            color: #4a4a4a; /* Серый */
+            text-decoration: none;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+            /* СВЕТЛАЯ ТЕНЬ ДЛЯ ЧИТАЕМОСТИ */
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        /* Эффект при наведении: текст становится темнее и тень ярче */
+        .welcome-container a:hover {
+            color: #1a1a1a; /* Почти чёрный */
+            text-shadow: 1px 1px 4px rgba(255, 255, 255, 1);
+        }
+
+        .welcome-container .creation-date {
+            color: #6a6a6a; /* Средне-серый */
+            font-size: 0.9em;
+            margin: 0;
+            /* СВЕТЛАЯ ТЕНЬ ДЛЯ ЧИТАЕМОСТИ */
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.7);
+        }
+
     </style>
 </head>
 <body>
-    <!-- Анимированные фоновые элементы -->
-    <div class="bg-circle"></div>
-    <div class="bg-circle"></div>
-    <div class="bg-circle"></div>
 
-    <!-- Основной контент -->
-    <div class="container">
-        <h1 class="main-title pulse">
-            Скоро тут что то будет!
-            <span class="dots">
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-            </span>
-        </h1>
-        
-        <div class="decorative-line"></div>
-        
-        <p class="subtitle">Этот домен принадлежит Аелум Haus</p>
+    <div class="sky">
+        <!-- Облака переднего плана -->
+        <div class="cloud cloud-fg cloud-fg-1">
+            <div class="cloud-shadow-puff" style="width: 140px; height: 140px; top: -40px; left: 30px;"></div>
+            <div class="cloud-shadow-puff" style="width: 160px; height: 160px; top: -50px; left: 90px;"></div>
+            <div class="cloud-puff" style="width: 100px; height: 100px; top: -45px; left: 25px;"></div>
+            <div class="cloud-puff" style="width: 130px; height: 130px; top: -55px; left: 85px;"></div>
+            <div class="cloud-puff" style="width: 90px; height: 90px; top: -35px; left: 145px;"></div>
+        </div>
+        <div class="cloud cloud-fg cloud-fg-2">
+            <div class="cloud-shadow-puff" style="width: 130px; height: 130px; top: -40px; left: 40px;"></div>
+            <div class="cloud-shadow-puff" style="width: 150px; height: 150px; top: -50px; left: 120px;"></div>
+            <div class="cloud-puff" style="width: 110px; height: 110px; top: -45px; left: 30px;"></div>
+            <div class="cloud-puff" style="width: 140px; height: 140px; top: -60px; left: 110px;"></div>
+            <div class="cloud-puff" style="width: 100px; height: 100px; top: -40px; left: 180px;"></div>
+        </div>
+        <div class="cloud cloud-fg cloud-fg-3">
+            <div class="cloud-puff" style="width: 120px; height: 120px; top: -40px; left: 20px;"></div>
+            <div class="cloud-puff" style="width: 150px; height: 150px; top: -50px; left: 80px;"></div>
+            <div class="cloud-puff" style="width: 100px; height: 100px; top: -30px; left: 140px;"></div>
+        </div>
+
+        <!-- Облака среднего плана -->
+        <div class="cloud cloud-mg cloud-mg-1">
+            <div class="cloud-puff" style="width: 80px; height: 80px; top: -25px; left: 10px;"></div>
+            <div class="cloud-puff" style="width: 100px; height: 100px; top: -35px; left: 60px;"></div>
+            <div class="cloud-puff" style="width: 70px; height: 70px; top: -20px; left: 100px;"></div>
+        </div>
+        <div class="cloud cloud-mg cloud-mg-2">
+            <div class="cloud-puff" style="width: 90px; height: 90px; top: -30px; left: 20px;"></div>
+            <div class="cloud-puff" style="width: 80px; height: 80px; top: -25px; left: 70px;"></div>
+        </div>
+        <div class="cloud cloud-mg cloud-mg-3">
+             <div class="cloud-puff" style="width: 110px; height: 110px; top: -35px; left: 30px;"></div>
+            <div class="cloud-puff" style="width: 90px; height: 90px; top: -30px; left: 90px;"></div>
+        </div>
+
+        <!-- Облака дальнего плана -->
+        <div class="cloud cloud-bg cloud-bg-1">
+            <div class="cloud-puff" style="width: 60px; height: 60px; top: -20px; left: 10px;"></div>
+            <div class="cloud-puff" style="width: 70px; height: 70px; top: -25px; left: 40px;"></div>
+        </div>
+        <div class="cloud cloud-bg cloud-bg-2">
+            <div class="cloud-puff" style="width: 70px; height: 70px; top: -22px; left: 15px;"></div>
+            <div class="cloud-puff" style="width: 65px; height: 65px; top: -20px; left: 50px;"></div>
+        </div>
+        <div class="cloud cloud-bg cloud-bg-3">
+            <div class="cloud-puff" style="width: 55px; height: 55px; top: -18px; left: 20px;"></div>
+            <div class="cloud-puff" style="width: 60px; height: 60px; top: -22px; left: 45px;"></div>
+        </div>
+
+
+        <!-- КОНТЕНТНЫЙ БЛОК ПО ЦЕНТРУ -->
+        <div class="welcome-container">
+            <h1>Добро пожаловать в Аелум Haus!</h1>
+            
+            <div class="social-links">
+                <a href="https://t.me/aeluminfo" target="_blank">ТГК нашего хауса</a>
+                <a href="https://www.tiktok.com/@aelum.house" target="_blank">Наш TikTok</a>
+            </div>
+            
+            <p class="creation-date">Хаус создан 10/24/2025</p>
+        </div>
+
     </div>
 
-    <script>
-        // Добавляем интерактивность
-        document.addEventListener('DOMContentLoaded', function() {
-            // Создаем дополнительные анимированные частицы
-            function createParticle() {
-                const particle = document.createElement('div');
-                particle.style.cssText = `
-                    position: absolute;
-                    width: 4px;
-                    height: 4px;
-                    background: rgba(255, 255, 255, 0.5);
-                    border-radius: 50%;
-                    pointer-events: none;
-                    animation: particleFloat 10s linear;
-                `;
-                
-                particle.style.left = Math.random() * window.innerWidth + 'px';
-                particle.style.top = window.innerHeight + 'px';
-                
-                document.body.appendChild(particle);
-                
-                setTimeout(() => {
-                    particle.remove();
-                }, 10000);
-            }
-            
-            // Анимация для частиц
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes particleFloat {
-                    to {
-                        transform: translateY(-${window.innerHeight + 100}px) translateX(${Math.random() * 200 - 100}px);
-                        opacity: 0;
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-            
-            // Создаем частицы периодически
-            setInterval(createParticle, 2000);
-            
-            // Эффект параллакса при движении мыши
-            document.addEventListener('mousemove', (e) => {
-                const circles = document.querySelectorAll('.bg-circle');
-                const x = e.clientX / window.innerWidth;
-                const y = e.clientY / window.innerHeight;
-                
-                circles.forEach((circle, index) => {
-                    const speed = (index + 1) * 20;
-                    const xPos = (x - 0.5) * speed;
-                    const yPos = (y - 0.5) * speed;
-                    
-                    circle.style.transform = `translate(${xPos}px, ${yPos}px)`;
-                });
-            });
-        });
-    </script>
 </body>
-  </html>
+</html>
